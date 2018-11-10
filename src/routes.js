@@ -7,6 +7,7 @@ import home from './components/home.vue';
 import browse from './components/browse.vue';
 import chat from './components/chatBox.vue';
 import discover from './components/discover.vue';
+import calendar from './components/calendar.vue';
 
 export default [
   { path: '/', component: home },
@@ -18,6 +19,5 @@ export default [
   { path: '/signup', component: signup },
   { path: '/browse', component: browse },
   { path: '/chatBox', component: chat },
-
+  { path: '/calendar', component: calendar },
 ];
-

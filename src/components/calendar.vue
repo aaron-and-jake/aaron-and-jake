@@ -24,8 +24,8 @@
 </template>
 <script>
 
-import CalendarView from "vue-simple-calendar/src/components/CalendarView.vue"
-import CalendarViewHeader from "vue-simple-calendar/src/components/CalendarViewHeader.vue"
+import CalendarView from 'vue-simple-calendar/src/components/CalendarView.vue';
+import CalendarViewHeader from 'vue-simple-calendar/src/components/CalendarViewHeader.vue';
 // import CalendarMathMixin from "vue-simple-calendar/src/components/CalendarMathMixin.js"
 
 import axios from 'axios';
@@ -50,12 +50,12 @@ export default {
       startingDayOfWeek: 0,
       disablePast: false,
       disableFuture: false,
-      displayPeriodUom: "month",
+      displayPeriodUom: 'month',
       displayPeriodCount: 1,
       showEventTimes: true,
-      newEventTitle: "",
-      newEventStartDate: "",
-      newEventEndDate: "",
+      newEventTitle: '',
+      newEventStartDate: '',
+      newEventEndDate: '',
       useDefaultTheme: true,
       useHolidayTheme: true,
       events: this.getEvents(),
@@ -80,7 +80,7 @@ export default {
   methods: {
     periodChanged(range, eventSource) {
       // Demo does nothing with this information, just including the method to demonstrate how
-      // you can listen for changes to the displayed range and react to them (by loading events, etc.)
+      // you can listen for changes to the displayed range and react (by loading events, etc.)
       console.log(eventSource);
       console.log(range);
     },
@@ -88,9 +88,9 @@ export default {
       const t = new Date();
       return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
     },
-    onClickDay(d) {
-      // this.message = `You clicked: ${d.toLocaleDateString()}`
-    },
+    // onClickDay(d) {
+    //   this.message = `You clicked: ${d.toLocaleDateString()}`
+    // },
     onClickEvent(e) {
       this.message = `You clicked: ${e.title}`;
     },
@@ -98,7 +98,7 @@ export default {
       // this.message = `Changing calendar view to ${d.toLocaleDateString()}`
       this.showDate = d;
     },
-    monthNames (num) {
+    monthNames(num) {
       const names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       return names[num];
     },
@@ -151,14 +151,16 @@ max-height: 80vh;
 background-color: white;
 }
 
-/* For long calendars, ensure each week gets sufficient height. The body of the calendar will scroll if needed */
+/* For long calendars, ensure each week gets sufficient height.
+The body of the calendar will scroll if needed */
 .cv-wrapper.period-month.periodCount-2 .cv-week,
 .cv-wrapper.period-month.periodCount-3 .cv-week,
 .cv-wrapper.period-year .cv-week {
 min-height: 6rem;
 }
 
-/* These styles are optional, to illustrate the flexbility of styling the calendar purely with CSS. */
+/* These styles are optional, to illustrate the flexbility
+of styling the calendar purely with CSS. */
 
 /* Add some styling for events tagged with the "birthday" class */
 
