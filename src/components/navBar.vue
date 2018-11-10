@@ -11,7 +11,6 @@
       <router-link to="/browse">Browse</router-link>
       <router-link to="/create">Create</router-link>
       <router-link to="/discover">Discover</router-link>
-      <router-link to="/calendar">Calendar</router-link>
     </b-nav>
   </div>
 </template>
