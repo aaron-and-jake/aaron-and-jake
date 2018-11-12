@@ -6,6 +6,7 @@ yarn-error.log
 .env
 recipe-api-keys.js
 *.sqlite
+data.sqlite
 
 # Editor directories and files
 .idea

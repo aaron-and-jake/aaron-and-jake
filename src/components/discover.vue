@@ -66,6 +66,7 @@ export default {
           }
         });
       }, (err) => {
+        this.$router.push('/login');
         console.log(err, 'error');
       });
   },

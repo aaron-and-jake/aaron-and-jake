@@ -14,22 +14,20 @@
         :starting-day-of-week="startingDayOfWeek"
         :class="themeClasses"
         :period-changed-callback="periodChanged"
-        class="cv-event"
-        @show-date-change="setShowDate"
-        @click-date="onClickDay"
         @click-event="onClickEvent"
+        class="cv-event"
         @click.stop="onClickEvent(e)"
       >
-        <calendar-view-header slot="header" slot-scope="t" :header-props="t.headerProps" @input="setShowDate('hey')" />
+        <calendar-view-header slot="header" slot-scope="t" :header-props="t.headerProps" @input="setShowDate" />
       </calendar-view>
     </div>
   </div>
 </template>
 <script>
 
-import axios from 'axios';
 import CalendarView from "./calendarview.vue"
 import CalendarViewHeader from "./calendarviewheader.vue"
+import axios from 'axios';
 import CalendarMathMixin from "./calendarmathmixin.js"
 
 
@@ -46,10 +44,6 @@ export default {
       t: {
         headerProps: {
           periodLabel: this.monthNames(new Date().getMonth()) + ' ' + new Date().getFullYear(),
-        // previousYear: new Date(),
-        // previousMonth: thePreviousMonth,
-        // nextYear: new Date(),
-        // nextMonth: new Date(),
         },
       },
       showDate: this.thisMonth(1),
@@ -82,52 +76,44 @@ export default {
     },
   },
 
-  methods: {
-    theNextYear() {
-
-    },
-    theNextMonth() {
-
-    },
-    thePreviousYear() {
-
-    },
-    thePreviousMonth() {
-      this.showDate = this.thisMonth(-1);
-    },
+	methods: {
     periodChanged(range, eventSource) {
       // Demo does nothing with this information, just including the method to demonstrate how
-      // you can listen for changes to the displayed range and react (by loading events, etc.)
-      console.log(eventSource);
-      console.log(range);
+			// you can listen for changes to the displayed range and react to them (by loading events, etc.)
+			// range.displayFirstDate = new Date();
+			// range.displayLastDate = "Sun Dec 02 2018 00:00:00 GMT-0600";
+			// range.periodEnd = "Fri Nov 30 2018 00:00:00 GMT-0600";
+			// range.periodStart = "Thu Nov 01 2018 00:00:00 GMT-0500";
+			console.log(eventSource)
+			console.log(range)
     },
     thisMonth(d, h, m) {
-      const t = new Date();
-      return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0);
+      const t = new Date()
+      return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
     },
-    // onClickDay(d) {
-    //   this.message = `You clicked: ${d.toLocaleDateString()}`
-    // },
     onClickEvent(e) {
       console.log(e);
       alert("Title: " + e.originalEvent.title + "\nDate: " + e.originalEvent.date + "\nTime: " + e.originalEvent.time + "\nAddress: " + e.originalEvent.address)
     },
     setShowDate(d) {
-      // FIGURE OUT WHY D IS UNDEFINED HERE!!!!!!!!!!!!!!!!!!
-      console.log(this, 'THIS IS THIS');
-      console.log(d, 'THIS IS D');
-      // this works to go to the previous month
-      // this.showDate = new Date().setMonth(new Date().getMonth() - 1);
-      // this changes the calendar no matter which button u press
-      this.showDate = this.thisMonth(-1);
-      console.log(this.showDate);
-      // if class is ____ , call function corresponding to that
-      const narrowDown = document.getElementsByClassName('cv-header-nav');
-      if (d === narrowDown[0].children[0]) {
-        console.log('HELLO');
+      if (d === 'previousPeriod') {
+        this.showDate = new Date(2018, 10);
+        this.t.headerProps.periodLabel = "November 2018";
+      }
+      if (d === 'nextPeriod') {
+        this.t.headerProps.periodLabel = "December 2018";
+        this.showDate = new Date(2018, 11);
+      }
+      if (d === 'previousYear') {
+        this.t.headerProps.periodLabel = "November 2017";
+        this.showDate = new Date(2017, 11);
+      }
+      if (d === 'nextYear') {
+        this.t.headerProps.periodLabel = "November 2019";
+        this.showDate = new Date(2019, 11);
       }
     },
-    monthNames(num) {
+    monthNames (num) {
       let names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       return names[num];
     },
