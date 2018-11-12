@@ -1,22 +1,51 @@
 <template>
-	<div class="cv-header">
-		<div class="cv-header-nav">
-			<button :enabled="!headerProps.previousYear" class="previousYear" @click="onInput('previousYear')">&lt;&lt;</button>
-			<button :enabled="!headerProps.previousPeriod" class="previousPeriod" @click="onInput('previousPeriod')">&lt;</button>
-			<button :enabled="!headerProps.nextPeriod" class="nextPeriod" @click="onInput('nextPeriod')">&gt;</button>
-			<button :enabled="!headerProps.nextPeriod" class="nextYear" @click="onInput('nextYear')">&gt;&gt;</button>
-			<button class="currentPeriod" @click="onInput(headerProps.currentPeriod)">Today</button>
-		</div>
-		<div class="periodLabel">
-			<slot name="label">
-				{{ headerProps.periodLabel }}
-			</slot>
-		</div>
-	</div>
+  <div class="cv-header">
+    <div class="cv-header-nav">
+      <button
+        :enabled="!headerProps.previousYear"
+        class="previousYear"
+        @click="onInput('previousYear')"
+      >
+        &lt;&lt;
+      </button>
+      <button
+        :enabled="!headerProps.previousPeriod"
+        class="previousPeriod"
+        @click="onInput('previousPeriod')"
+      >
+        &lt;
+      </button>
+      <button
+        :enabled="!headerProps.nextPeriod"
+        class="nextPeriod"
+        @click="onInput('nextPeriod')"
+      >
+        &gt;
+      </button>
+      <button
+        :enabled="!headerProps.nextPeriod"
+        class="nextYear"
+        @click="onInput('nextYear')"
+      >
+        &gt;&gt;
+      </button>
+      <button
+        class="currentPeriod"
+        @click="onInput(headerProps.currentPeriod)"
+      >
+        Today
+      </button>
+    </div>
+    <div class="periodLabel">
+      <slot name="label">
+        {{ headerProps.periodLabel }}
+      </slot>
+    </div>
+  </div>
 </template>
 <script>
 export default {
-  name: "CalendarViewHeader",
+  name: 'CalendarViewHeader',
   props: {
     headerProps: {
       type: Object,
@@ -25,7 +54,7 @@ export default {
   },
   methods: {
     onInput(d) {
-      this.$emit("input", d);
+      this.$emit('input', d);
     },
   },
 };

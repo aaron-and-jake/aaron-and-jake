@@ -14,11 +14,16 @@
         :starting-day-of-week="startingDayOfWeek"
         :class="themeClasses"
         :period-changed-callback="periodChanged"
-        @click-event="onClickEvent"
         class="cv-event"
+        @click-event="onClickEvent"
         @click.stop="onClickEvent(e)"
       >
-        <calendar-view-header slot="header" slot-scope="t" :header-props="t.headerProps" @input="setShowDate" />
+        <calendar-view-header
+          slot="header"
+          slot-scope="t"
+          :header-props="t.headerProps"
+          @input="setShowDate"
+        />
       </calendar-view>
     </div>
   </div>
@@ -76,24 +81,24 @@ export default {
     },
   },
 
-	methods: {
+  methods: {
     periodChanged(range, eventSource) {
       // Demo does nothing with this information, just including the method to demonstrate how
-			// you can listen for changes to the displayed range and react to them (by loading events, etc.)
-			// range.displayFirstDate = new Date();
-			// range.displayLastDate = "Sun Dec 02 2018 00:00:00 GMT-0600";
-			// range.periodEnd = "Fri Nov 30 2018 00:00:00 GMT-0600";
-			// range.periodStart = "Thu Nov 01 2018 00:00:00 GMT-0500";
-			console.log(eventSource)
-			console.log(range)
+      // you can listen for changes to the displayed range and react to them (by loading events, etc.)
+      // range.displayFirstDate = new Date();
+      // range.displayLastDate = "Sun Dec 02 2018 00:00:00 GMT-0600";
+      // range.periodEnd = "Fri Nov 30 2018 00:00:00 GMT-0600";
+      // range.periodStart = "Thu Nov 01 2018 00:00:00 GMT-0500";
+      console.log(eventSource);
+      console.log(range);
     },
     thisMonth(d, h, m) {
-      const t = new Date()
-      return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
+      const t = new Date();
+      return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0);
     },
     onClickEvent(e) {
       console.log(e);
-      alert("Title: " + e.originalEvent.title + "\nDate: " + e.originalEvent.date + "\nTime: " + e.originalEvent.time + "\nAddress: " + e.originalEvent.address)
+      alert("Title: " + e.originalEvent.title + "\nDate: " + e.originalEvent.date + "\nTime: " + e.originalEvent.time + "\nAddress: " + e.originalEvent.address);
     },
     setShowDate(d) {
       if (d === 'previousPeriod') {
@@ -113,8 +118,8 @@ export default {
         this.showDate = new Date(2019, 11);
       }
     },
-    monthNames (num) {
-      let names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    monthNames(num) {
+      const names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       return names[num];
     },
     getEvents() {
