@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
   data() {
     return {
@@ -54,9 +56,9 @@ export default {
             eName: response.body[i].name.text,
             eDescript: response.body[i].description.text.slice(0, 200),
             eUrl: response.body[i].url,
-            eDate: response.body[i].start.local.slice(0, -9),
-            eStart: response.body[i].start.local.slice(-8),
-            eEnd: response.body[i].end.local.slice(-8),
+            eDate: moment(response.body[i].start.local).format('dddd, MMMM Do YYYY'),
+            eStart: moment(response.body[i].start.local).format('h:mm a'),
+            eEnd: moment(response.body[i].end.local).format('h:mm a'),
             eImg: response.body[i].logo.original.url,
           };
           if (this.eventbrite.length < 18) {
