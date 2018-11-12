@@ -1,5 +1,8 @@
+/* eslint no-console: "off" */
+
 require('dotenv').config();
 const path = require('path');
+const axios = require('axios');
 // express requirements
 const express = require('express');
 const expressVue = require('express-vue');
@@ -24,7 +27,7 @@ const JsonStrategy = require('passport-json').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 // google maps requirement
 const googleMapsClient = require('@google/maps').createClient({
-  key: process.env.GOOGLE_MAPS_API_KEY,
+  key: 'AIzaSyBJD85FTteN9V7H01EB8kqPCLzZgQgJF1Q',
 });
 // socket requirement
 const socket = require('socket.io');
@@ -131,6 +134,27 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
+app.get('/discover', (req, res) => {
+  // find user data via id in req header cookie
+  passport.authenticate('local');
+  if (req.user) {
+    User.findOne({
+      where: {
+        id: req.headers.cookie.slice(5, 6),
+      },
+    })
+      .then(user => axios.get(`https://www.eventbriteapi.com/v3/events/search/?sort_by=date&location.address=${user.City}&location.within=25km&categories=110&token=PAC76UQSEK725KLYGSC4`)
+        .then((response) => {
+          const e = response.data.events;
+          res.send(e);
+        })
+        .catch((err) => { console.log(err); }));
+  } else {
+    // redirect if not logged in
+    res.status(401).send('Go log in first!');
+  }
+});
+
 // Data for Map
 app.get('/browse', (req, res) => {
   Event.findAll().then((events) => {
@@ -164,6 +188,7 @@ app.get('/profile', (req, res) => {
           memberSince: user.createdAt,
           Birthday: user.Birthday,
           Image: user.Image || null,
+          eventCount: user.Event_Count,
         };
         res.status(200).send(dataToSend);
       });
@@ -186,7 +211,8 @@ app.post('/signup', (req, res) => {
       City: req.body.city,
       Password: hash,
       Birthday: req.body.dob,
-      Image: req.body.Image || null,
+      Image: null,
+      Event_Count: 0,
     },
   })
     .spread((user, created) => {
@@ -215,6 +241,7 @@ app.post('/create', (req, res) => {
     location, name, meal, time, date,
   } = req.body;
   User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
+    user.increment('Event_Count', { by: 1 });
     host = user.Name;
     // Calculate Latitude and Longitude, City, Zip from this address
     googleMapsClient.geocode({
@@ -241,6 +268,7 @@ app.post('/create', (req, res) => {
           Date: date,
           Time: time,
           Host: host,
+          Rating: 0,
         }).then(() => {
           // send back created event if needed
           Event.find({ where: { Name: name } }).then((event) => {
@@ -372,11 +400,17 @@ app.post('/approve', (req, res) => {
       User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
         notifications = user.Notifications.replace(eventPair, '');
       }).then(() => {
-        User.update({ Notifications: notifications }, { where: { Name: req.user.dataValues.Name } });
+        User.update(
+          { Notifications: notifications },
+          { where: { Name: req.user.dataValues.Name } },
+        );
       });
     })
     .then(() => {
-      Event.update({ Contributor_List: currentContributors }, { where: { Name: req.body.eventName } }).then((affectedRows) => {
+      Event.update(
+        { Contributor_List: currentContributors },
+        { where: { Name: req.body.eventName } },
+      ).then((affectedRows) => {
         console.log('contributor list updated: ', affectedRows);
         res.status(201).send('request approved');
       });
@@ -387,7 +421,23 @@ app.post('/approve', (req, res) => {
     });
 });
 
-const port = process.env.PORT;
+app.post('/giveStar', (req, res) => {
+  const { stars } = req.body;
+  const { eventName } = req.body;
+  const { hostName } = req.body;
+  Event.findOne({ where: { Name: eventName } }).then(event => event.increment('Rating', { by: stars }));
+  Event.findAll({ where: { Host: hostName } }).then((events) => {
+    // console.log('eventzero', events[0].dataValues.Host);
+    let sum = 0;
+    for (let i = 0; i < events.length; i += 1) {
+      sum += events[i].dataValues.Rating;
+    }
+    const avg = sum / events.length;
+    User.update({ Host_Rating: avg }, { where: { Name: hostName } }).then(() => { console.log('updated!'); });
+  });
+});
+
+const port = process.env.PORT || 3000;
 
 const server = app.listen(port, () => {
   console.log(`app listening on port ${port}`);

@@ -6,16 +6,18 @@ import signup from './components/signup.vue';
 import home from './components/home.vue';
 import browse from './components/browse.vue';
 import chat from './components/chatBox.vue';
+import discover from './components/discover.vue';
+import calendar from './components/calendar.vue';
 
 export default [
   { path: '/', component: home },
   { path: '/profile', component: profile },
   { path: '/login', component: login },
   { path: '/event', component: event },
+  { path: '/discover', component: discover },
   { path: '/create', component: create },
   { path: '/signup', component: signup },
   { path: '/browse', component: browse },
   { path: '/chatBox', component: chat },
-
+  { path: '/calendar', component: calendar },
 ];
-

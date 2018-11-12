@@ -1,105 +1,103 @@
 <template>
-<div type="text/x-template" id="modal-template">
-  <transition name="modal">
-    <div class="modal-mask">
-      <div class="modal-wrapper">
-        <div class="modal-container">
+  <div
+    id="modal-template"
+    type="text/x-template"
+  >
+    <transition name="modal">
+      <div class="modal-mask">
+        <div class="modal-wrapper">
+          <div class="modal-container">
 
-          <div class="modal-header">
-            <slot name="header">
-              default header
-            </slot>
-          </div>
+            <div class="modal-header">
+              <slot name="header">
+                default header
+              </slot>
+            </div>
 
-          <div class="modal-body">
-            <slot name="body">
-              <div id="chat-box">
-        <div id="chat-window">
-            <div id="output"></div>
-            <div id="feedback"></div>
-        </div>
-        <p id="handle">{{name}}</p>
-        <input id="message" type="text" placeholder="Message">
-        <b-btn id="send">Send</b-btn>
-    </div>
-            </slot>
-          </div>
+            <div class="modal-body">
+              <slot name="body">
+                <div id="chat-box">
+                  <div id="chat-window">
+                    <div id="output" />
+                    <div id="feedback" />
+                  </div>
+                  <p id="handle">{{ name }}</p>
+                  <input
+                    id="message"
+                    type="text"
+                    placeholder="Message"
+                  >
+                  <b-btn id="send">Send</b-btn>
+                </div>
+              </slot>
+            </div>
 
-          <div class="modal-footer">
-            <slot name="footer">
-              <b-btn class="modal-default-button" @click="$emit('close')">
-                Close chat
-              </b-btn>
-            </slot>
+            <div class="modal-footer">
+              <slot name="footer">
+                <b-btn
+                  class="modal-default-button"
+                  @click="$emit('close')"
+                >
+                  Close chat
+                </b-btn>
+              </slot>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </transition>
-</div>
-
-
-    
+    </transition>
+  </div>
 </template>
 
 
 <script>
+/* eslint no-console: "off" */
+
 // Imports
 export default {
-  props: [
-    'event', 'name'
-  ],
-    data() {
-        return {
+  props: ['event', 'name'],
+  data() {
+    return {
+    };
+  },
+  mounted() {
+    console.log(this.name);
+    const socket = io.connect('http://localhost:3000');
 
-        }
-    },
-    mounted() {
-      console.log(this.name);
-        const socket = io.connect('http://localhost:3001');
+    const message = document.getElementById('message');
+    const handle = document.getElementById('handle');
+    const btn = document.getElementById('send');
+    const output = document.getElementById('output');
+    const feedback = document.getElementById('feedback');
 
+    const eventName = this.event.Name;
+    console.log(eventName);
+    socket.emit('open', {
+      event: eventName,
+    });
 
-        let message = document.getElementById('message');
-        let handle = document.getElementById('handle');
-        let btn = document.getElementById('send');
-        let output = document.getElementById('output');
-        let feedback = document.getElementById('feedback');
+    btn.addEventListener('click', () => {
+      socket.emit('chat', {
+        message: message.value,
+        handle: this.name,
+        event: eventName,
+      });
+    });
 
-        let eventName = this.event.Name;
-        console.log(eventName);
-        socket.emit('open', {
-          event: eventName,
-        })
+    message.addEventListener('keypress', () => {
+      socket.emit('typing', this.name);
+    });
 
-        btn.addEventListener('click', () => {
-            socket.emit('chat', {
-                message: message.value,
-                handle: this.name,
-                event: eventName,
-            });
-        });
+    socket.on('chat', (data) => {
+      feedback.innerHTML = '';
+      output.innerHTML += `<p><strong>${data.handle}:</strong>${data.message}</p>`;
+    });
 
-        message.addEventListener('keypress', () => {
-            socket.emit('typing', this.name);
-        });
-
-
-        socket.on('chat', (data) => {
-            feedback.innerHTML = '';
-            output.innerHTML += `<p><strong>${data.handle}:</strong>${data.message}</p>`;
-        });
-
-
-        socket.on('typing', (data) => {
-            feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>'
-        });
-    }
-}
-
-
-
-
-
+    socket.on('typing', (data) => {
+      feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>';
+    });
+  },
+};
 </script>
 
 <style scoped>

@@ -1,17 +1,11 @@
+/* eslint-disable no-console */
 const Sequelize = require('sequelize');
 const passwordHash = require('password-hash');
 
-const sequelize = new Sequelize('dinner', 'buckeyedseminole', 'Opspark17', {
-  host: 'whoscomingtodinner.database.windows.net',
-  dialect: 'mssql',
-  dialectOptions: {
-    encrypt: true,
-  },
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000,
-  },
+const sequelize = new Sequelize('database', 'root', '', {
+  host: 'localhost',
+  dialect: 'sqlite',
+  storage: 'data.sqlite',
 });
 
 sequelize.authenticate()
@@ -51,6 +45,9 @@ const User = sequelize.define('user', {
   Image: {
     type: Sequelize.STRING,
   },
+  Event_Count: {
+    type: Sequelize.INTEGER,
+  },
 });
 
 const Event = sequelize.define('event', {
@@ -89,6 +86,9 @@ const Event = sequelize.define('event', {
   Zip_Code: {
     type: Sequelize.INTEGER,
   },
+  Rating: {
+    type: Sequelize.INTEGER,
+  },
 });
 
 const Message = sequelize.define('message', {
@@ -102,6 +102,14 @@ const Message = sequelize.define('message', {
     type: Sequelize.STRING,
   },
 });
+
+sequelize
+  .sync({ force: false })
+  .then((res) => {
+    console.log('It worked!');
+  }, (err) => {
+    console.log('An error occurred while creating the table:', err);
+  });
 
 // TEST DB-MESSAGE CREATION & QUERY
 // Message.sync().then(() => {
@@ -153,7 +161,7 @@ const Message = sequelize.define('message', {
 //   const hash = passwordHash.generate('test');
 //   // TEST password-hash
 //   User.findOrCreate({
-//     where: { Email: 'jake@test.com' }, 
+//     where: { Email: 'jake@test.com' },
 //     defaults: {
 //       Name: 'Jake Test',
 //       Host_Rating: 0,

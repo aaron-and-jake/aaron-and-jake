@@ -1,32 +1,33 @@
-// var io = require('socket.io')
+const io = require('socket.io');
+
 const socket = io.connect('http://61e83bf3.ngrok.io');
 
 
-let message = document.getElementById('message');
-let handle = document.getElementById('handle');
-let btn = document.getElementById('send');
-let output = document.getElementById('output');
-let feedback = document.getElementById('feedback');
+const message = document.getElementById('message');
+const handle = document.getElementById('handle');
+const btn = document.getElementById('send');
+const output = document.getElementById('output');
+const feedback = document.getElementById('feedback');
 
 
 btn.addEventListener('click', () => {
-    socket.emit('chat', {
-        message: message.value,
-        handle: handle.value,
-    });
+  socket.emit('chat', {
+    message: message.value,
+    handle: handle.value,
+  });
 });
 
 message.addEventListener('keypress', () => {
-    socket.emit('typing', handle.value);
+  socket.emit('typing', handle.value);
 });
 
 
 socket.on('chat', (data) => {
-    feedback.innerHTML = '';
-    output.innerHTML += `<p><strong>${data.handle}:</strong>${data.message}</p>`;
+  feedback.innerHTML = '';
+  output.innerHTML += `<p><strong>${data.handle}:</strong>${data.message}</p>`;
 });
 
 
 socket.on('typing', (data) => {
-    feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>'
+  feedback.innerHTML = `<p><em>${data} is typing a message...</em></p>`;
 });

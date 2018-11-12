@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable no-new */
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import VueResource from 'vue-resource';
@@ -25,7 +27,7 @@ new Vue({
   el: '#app',
   render: h => h(App),
   router,
+}).$mount('#calendar');
 
-
-});
-
+// calendar stuff
+Vue.config.productionTip = false;

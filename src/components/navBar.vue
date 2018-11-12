@@ -1,41 +1,38 @@
 <template>
-    <div>
-        
-        <b-nav class="topnav" id="myTopnav">
-            
-    <h4>PotLucky</h4>
-    
-
-            <router-link to="/">Home</router-link>
-            <router-link to="/profile">Profile</router-link>
-            <router-link to="/login">Login/signup</router-link>
-            <router-link to="/browse">Browse</router-link>
-            <router-link to="/create">Create</router-link>
-        </b-nav>
-
-    </div>
+  <div>
+    <b-nav
+      id="myTopnav"
+      class="topnav"
+    >
+      <h4>PotLucky</h4>
+      <router-link to="/">Home</router-link>
+      <router-link to="/profile">Profile</router-link>
+      <router-link to="/login">Login/signup</router-link>
+      <router-link to="/browse">Browse</router-link>
+      <router-link to="/create">Create</router-link>
+      <router-link to="/discover">Discover</router-link>
+      <router-link to="/calendar">Calendar</router-link>
+    </b-nav>
+  </div>
 </template>
 
 <script>
 // Imports
 export default {
-    data() {
-        return {
-
-        }
-    },
-    methods: {
-
-    }
-}
+  data() {
+    return {
+    };
+  },
+  methods: {
+  },
+};
 </script>
 
 <style scoped>
 .topnav {
     background-color: #333;
     overflow: hidden;
-   padding-top: 40px; 
-    
+    padding-top: 40px;
 }
 
 /* Style the links inside the navigation bar */

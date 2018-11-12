@@ -1,155 +1,209 @@
 <template>
-    <b-container>
-       
-						
-        <b-row>
-            <div class="col-lg-12">
-                <div class="card hovercard">
-                    <div class="card-background">
-                        <img class="card-bkimg" alt="" src="https://scontent-dft4-3.xx.fbcdn.net/v/t1.0-9/10447708_10105496802291065_3147331436798292945_n.jpg?oh=ff797fce9d955f7447e90ee529022d1c&oe=5A420D4C">
-                    </div>
-                    <div class="useravatar">
-                        <img alt="" v-bind:src="data.image">
-                    </div>
-                    <div class="card-info">
-                        <span class="card-title">{{this.data.profileName}}</span>
-                    </div>
-                </div>
-            </div>
-        </b-row>
-        <b-row>
-            <!-- profile info -->
-            <b-col cols="9" class="info">
-                <p>
-                    <span class="title">Email:</span> {{this.data.profileEmail}}</p>
-                <p>
-                    <span class="title">Current City:</span> {{this.data.profileCity}}</p>
-                <p>
-                    <span class="title">Date of birth:</span> {{this.data.birthday}}</p>
-                <!-- <p>
-                    <span class="title">Host Rating:</span> {{this.data.profileHR}}</p>
-                <p>
-                    <span class="title">Guest Rating:</span> {{this.data.profileCR}}</p> -->
-            </b-col>
-            <b-col class='profile-buttons'>
-                <h4>Notifications:</h4>
-                <ul>
-                    <li v-for="(notification, index) in this.data.notifications" v-bind:notification="notification">
-                        {{notification}}
-                         <br>
-                        <b-button id="approve" @click="approveRequest(notification, index)">Approve this request</b-button> 
-                    </li>
-                </ul>
-
-                <h4 v-if="!showEvent">Events:</h4>
-                <b-btn v-if="showEvent" v-on:click='showEvent = !showEvent'> Close Event</b-btn>
-                <ul v-if="!showEvent">
-                    <li v-for="event in this.data.events" v-bind:key="event.id">
-                        {{event.Name}}
-                        <b-btn v-on:click='sEvent(event)'>Event Details</b-btn>
-                    </li>
-                </ul>
-            </b-col>
-        </b-row>
-        <b-row>
-            <eventdiv v-if="showEvent" v-bind:event="event" v-bind:name="this.data.profileName"></eventdiv>
-        </b-row>
-         
-
-    </b-container>
+  <b-container>
+    <b-row>
+      <div class="col-lg-12">
+        <div class="card hovercard">
+          <div class="card-background">
+            <img
+              class="card-bkimg"
+              alt=""
+              src="https://scontent-dft4-3.xx.fbcdn.net/v/t1.0-9/10447708_10105496802291065_3147331436798292945_n.jpg?oh=ff797fce9d955f7447e90ee529022d1c&oe=5A420D4C"
+            >
+          </div>
+          <div class="useravatar">
+            <img
+              alt=""
+              :src="data.image"
+            >
+          </div>
+          <div class="card-info">
+            <span class="card-title">{{ data.profileName }}</span>
+          </div>
+        </div>
+      </div>
+    </b-row>
+    <b-row>
+      <!-- profile info -->
+      <b-col
+        cols="9"
+        class="info"
+      >
+        <p>
+        <span class="title">Email:</span> {{ data.profileEmail }}</p>
+        <p>
+        <span class="title">Current City:</span> {{ data.profileCity }}</p>
+        <p>
+        <span class="title">Date of birth:</span> {{ data.birthday }}</p>
+        <p>
+        <span class="title">Average Stars:</span> {{ data.profileHR }}</p>
+        <p>
+        <span class="title">Total Events:</span> {{ data.profileEC }}</p>
+      </b-col>
+      <b-col class="profile-buttons">
+        <h4>Notifications:</h4>
+        <ul>
+          <li
+            v-for="(notification, index) in data.notifications"
+            :key="notification"
+          >
+            {{ notification }}
+            <br>
+            <b-button
+              id="approve"
+              @click="approveRequest(notification, index)"
+            >
+              Approve this request
+            </b-button>
+          </li>
+        </ul>
+        <h4 v-if="!showEvent">Events:</h4>
+        <b-btn
+          v-if="showEvent"
+          @click="showEvent = !showEvent"
+        >
+          Close Event
+        </b-btn>
+        <ul v-if="!showEvent">
+          <li
+            v-for="event in data.events"
+            :key="event.id"
+          >
+            {{ event.Name }}
+            <b-btn @click="sEvent(event)">Event Details</b-btn>
+          </li>
+        </ul>
+      </b-col>
+    </b-row>
+    <b-row>
+      <eventdiv
+        v-if="showEvent"
+        :event="event"
+        :name="data.profileName"
+      />
+    </b-row>
+  </b-container>
 </template>
 
 <script>
+/* eslint no-console: "off" */
 // Imports
-import eventdiv from './event.vue'
+import eventdiv from './event.vue';
+
 export default {
-    components: {
-        eventdiv: eventdiv,
+  components: {
+    eventdiv,
+  },
+  data() {
+    return {
+      event: '',
+      showEvent: false,
+      data: {
+        profileName: '',
+        profileCity: '',
+        profileEmail: '',
+        profileHR: '',
+        profileCR: '',
+        birthday: '',
+        notifications: '',
+        notificationData: [],
+        events: [],
+        image: '',
+      },
+    };
+  },
+  mounted() {
+    this.$http.get('/profile')
+      .then((response) => {
+        console.log(response.body);
+        this.data.profileName = response.body.Name;
+        this.data.profileCity = response.body.City;
+        this.data.profileEmail = response.body.Email;
+        this.data.profileHR = response.body.hostRating;
+        this.data.profileCR = response.body.contributorRating;
+        this.data.birthday = response.body.Birthday;
+        this.data.image = response.body.Image || 'http://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?k=6&m=476085198&s=612x612&w=0&h=5cDQxXHFzgyz8qYeBQu2gCZq1_TN0z40e_8ayzne0X0=';
+        this.data.profileEC = response.body.eventCount;
+      }, (err) => {
+        this.$router.push('/login');
+        console.log(err);
+      });
+    this.$http.get('/userevents')
+      .then((response) => {
+        this.data.events = response.body;
+      }, (err) => {
+        this.$router.push('/login');
+        console.log(err);
+      });
+    this.$http.get('/notifications')
+      .then((response) => {
+        if (!response.body.length) {
+          return;
+        }
+        console.log(response.body);
+        const notificationDataPairs = [];
+        const notifications = response.body;
+        const formattedNotifications = [];
+        notifications.forEach((notification) => {
+          if (notification !== '') {
+            const split = notification.split(':');
+            notificationDataPairs.push(split);
+            formattedNotifications.push(`${split[1]} wants to join your ${split[0]} party!`);
+          }
+        });
+        this.data.notificationData = notificationDataPairs;
+        console.log(formattedNotifications);
+        this.data.notifications = formattedNotifications.length ? formattedNotifications : [];
+      });
+  },
+  methods: {
+    sEvent(clickedEvent) {
+      this.event = clickedEvent;
+      this.showEvent = !this.showEvent;
     },
-    data() {
-        return {
-            event: '',
-            showEvent: false,
-            data: {
-                profileName: '',
-                profileCity: '',
-                profileEmail: '',
-                profileHR: '',
-                profileCR: '',
-                birthday: '',
-                notifications: '',
-                notificationData: [],
-                events: [],
-                image: '',
+    mounted() {
+      this.$http.get('/profile')
+        .then((response) => {
+          console.log(response.body);
+          this.data.profileName = response.body.Name;
+          this.data.profileCity = response.body.City;
+          this.data.profileEmail = response.body.Email;
+          this.data.profileHR = response.body.hostRating;
+          this.data.profileCR = response.body.contributorRating;
+          this.data.birthday = response.body.Birthday;
+          this.data.image = response.body.Image || 'http://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?k=6&m=476085198&s=612x612&w=0&h=5cDQxXHFzgyz8qYeBQu2gCZq1_TN0z40e_8ayzne0X0=';
+          this.data.profileEC = response.body.eventCount;
+        }, (err) => {
+          this.$router.push('/login');
+        });
+      this.$http.get('/userevents')
+        .then((response) => {
+          this.data.events = response.body;
+        }, (err) => {
+          this.$router.push('/login');
+        });
+      this.$http.get('/notifications')
+        .then((response) => {
+          if (!response.body.length) {
+            return;
+          }
+          console.log(response.body);
+          const notificationDataPairs = [];
+          const notifications = response.body;
+          const formattedNotifications = [];
+          notifications.forEach((notification) => {
+            if (notification !== '') {
+              const split = notification.split(':');
+              notificationDataPairs.push(split);
+              formattedNotifications.push(`${split[1]} wants to join your ${split[0]} party!`);
             }
-
-
-        }
+          });
+          this.data.notificationData = notificationDataPairs;
+          console.log(formattedNotifications);
+          this.data.notifications = formattedNotifications.length ? formattedNotifications : [];
+        });
     },
-    mounted: function() {
-        this.$http.get('/profile')
-            .then(function(response) {
-                console.log(response.body);
-                this.data.profileName = response.body.Name;
-                this.data.profileCity = response.body.City;
-                this.data.profileEmail = response.body.Email;
-                this.data.profileHR = response.body.hostRating;
-                this.data.profileCR = response.body.contributorRating;
-                this.data.birthday = response.body.Birthday;
-                this.data.image = response.body.Image || "http://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?k=6&m=476085198&s=612x612&w=0&h=5cDQxXHFzgyz8qYeBQu2gCZq1_TN0z40e_8ayzne0X0=";
-            }, (err) => {
-                this.$router.push('/login');
-            });
-        this.$http.get('/userevents')
-            .then(function(response) {
-                this.data.events = response.body;
-            }, (err) => {
-                this.$router.push('/login');
-            })
-        this.$http.get('/notifications')
-            .then(function(response) {
-                if (!response.body.length) {
-                    return;
-                }
-                console.log(response.body);
-                let notificationDataPairs = [];
-                const notifications = response.body;
-                let formattedNotifications = [];
-                notifications.forEach((notification) => {
-                    if (notification !== '') {
-                        let split = notification.split(':');
-                        notificationDataPairs.push(split);
-                        formattedNotifications.push(`${split[1]} wants to join your ${split[0]} party!`);
-                    }
-                })
-
-                this.data.notificationData = notificationDataPairs;
-                console.log(formattedNotifications);
-                this.data.notifications = formattedNotifications.length ? formattedNotifications : [];
-            })
-    },
-    methods: {
-        sEvent(clickedEvent) {
-            this.event = clickedEvent
-            this.showEvent = !this.showEvent;
-        },
-        approveRequest(notification, index) {
-            console.log('approve:', this.data.notificationData[index]);
-            const data = this.data.notificationData[index];
-            this.$http.post('/approve', {
-                eventName: data[0],
-                approvedUser: data[1],
-            }).then((response) => {
-                this.data.notifications.splice(index, 1);
-                this.data.notificationData.splice(index, 1);
-            }).catch((err) => {
-                console.log('error approving request');
-            })
-
-        }
-
-    }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -243,10 +297,8 @@ export default {
 
 .btn-pref .btn {
     -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
 }
-
-
-
 
 /* body {
     margin-top: 20px;
