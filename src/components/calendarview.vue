@@ -1,77 +1,77 @@
 <template>
-	<div :class="[
-		'cv-wrapper',
-		'locale-' + languageCode(displayLocale),
-		'locale-' + displayLocale,
-		'y' + periodStart.getFullYear(),
-		'm' + paddedMonth(periodStart),
-		'period-' + displayPeriodUom,
-		'periodCount-' + displayPeriodCount,
-		{
-			past: isPastMonth(periodStart),
-			future: isFutureMonth(periodStart),
-			noIntl: !supportsIntl,
-		}
-	]">
-		<slot :header-props="headerProps" name="header" />
-		<div class="cv-header-days">
-			<template v-for="(label, index) in weekdayNames">
-				<slot :index="getColumnDOWClass(index)" :label="label" name="dayHeader">
-					<div :key="getColumnDOWClass(index)" :class="getColumnDOWClass(index)" class="cv-header-day">{{ label }}</div>
-				</slot>
-			</template>
-		</div>
-		<div class="cv-weeks">
-			<div v-for="(weekStart, weekIndex) in weeksOfPeriod"
-				:key="`${weekIndex}-week`"
-				:class="['cv-week', 'week' + (weekIndex+1), 'ws' + isoYearMonthDay(weekStart)]">
-				<div v-for="(day, dayIndex) in daysOfWeek(weekStart)"
-					:key="getColumnDOWClass(dayIndex)"
-					:class="[
-						'cv-day',
-						getColumnDOWClass(dayIndex),
-						'd' + isoYearMonthDay(day),
-						'd' + isoMonthDay(day),
-						'd' + paddedDay(day),
-						'instance' + instanceOfMonth(day),
-						{
-							outsideOfMonth: !isSameMonth(day, defaultedShowDate),
-							today: isSameDate(day, today()),
-							past: isInPast(day),
-							future: isInFuture(day),
-							last: isLastDayOfMonth(day),
-							lastInstance: isLastInstanceOfMonth(day)
-						},
-						...((dateClasses && dateClasses[isoYearMonthDay(day)]) || null)
-					]"
-					@click="onClickDay(day)"
-					@drop.prevent="onDrop(day, $event)"
-					@dragover.prevent="onDragOver(day)"
-					@dragenter.prevent="onDragEnter(day, $event)"
-					@dragleave.prevent="onDragLeave(day, $event)"
-				>
-					<div class="cv-day-number">{{ day.getDate() }}</div>
-					<slot :day="day" name="dayContent" />
-				</div>
-				<template v-for="e in getWeekEvents(weekStart)">
-					<slot :event="e" :weekStartDate="weekStart" :top="getEventTop(e)" name="event">
-						<div
-							:key="e.id"
-							:draggable="enableDragDrop"
-							:class="e.classes"
-							:title="e.title"
-							:style="`top:${getEventTop(e)};${e.originalEvent.style}`"
-							class="cv-event"
-							@dragstart="onDragStart(e, $event)"
-							@mouseenter="onMouseEnter(e)"
-							@mouseleave="onMouseLeave"
-							@click.stop="onClickEvent(e)"
-							v-html="getEventTitle(e)"/>
-					</slot>
-				</template>
-			</div>
-		</div>
-	</div>
+  <div :class="[
+    'cv-wrapper',
+    'locale-' + languageCode(displayLocale),
+    'locale-' + displayLocale,
+    'y' + periodStart.getFullYear(),
+    'm' + paddedMonth(periodStart),
+    'period-' + displayPeriodUom,
+    'periodCount-' + displayPeriodCount,
+    {
+      past: isPastMonth(periodStart),
+      future: isFutureMonth(periodStart),
+      noIntl: !supportsIntl,
+    }
+  ]">
+    <slot :header-props="headerProps" name="header" />
+    <div class="cv-header-days">
+      <template v-for="(label, index) in weekdayNames">
+        <slot :index="getColumnDOWClass(index)" :label="label" name="dayHeader">
+          <div :key="getColumnDOWClass(index)" :class="getColumnDOWClass(index)" class="cv-header-day">{{ label }}</div>
+        </slot>
+      </template>
+    </div>
+    <div class="cv-weeks">
+      <div v-for="(weekStart, weekIndex) in weeksOfPeriod"
+        :key="`${weekIndex}-week`"
+        :class="['cv-week', 'week' + (weekIndex+1), 'ws' + isoYearMonthDay(weekStart)]">
+        <div v-for="(day, dayIndex) in daysOfWeek(weekStart)"
+          :key="getColumnDOWClass(dayIndex)"
+          :class="[
+            'cv-day',
+            getColumnDOWClass(dayIndex),
+            'd' + isoYearMonthDay(day),
+            'd' + isoMonthDay(day),
+            'd' + paddedDay(day),
+            'instance' + instanceOfMonth(day),
+            {
+              outsideOfMonth: !isSameMonth(day, defaultedShowDate),
+              today: isSameDate(day, today()),
+              past: isInPast(day),
+              future: isInFuture(day),
+              last: isLastDayOfMonth(day),
+              lastInstance: isLastInstanceOfMonth(day)
+            },
+            ...((dateClasses && dateClasses[isoYearMonthDay(day)]) || null)
+          ]"
+          @click="onClickDay(day)"
+          @drop.prevent="onDrop(day, $event)"
+          @dragover.prevent="onDragOver(day)"
+          @dragenter.prevent="onDragEnter(day, $event)"
+          @dragleave.prevent="onDragLeave(day, $event)"
+        >
+          <div class="cv-day-number">{{ day.getDate() }}</div>
+          <slot :day="day" name="dayContent" />
+        </div>
+        <template v-for="e in getWeekEvents(weekStart)">
+          <slot :event="e" :weekStartDate="weekStart" :top="getEventTop(e)" name="event">
+            <div
+              :key="e.id"
+              :draggable="enableDragDrop"
+              :class="e.classes"
+              :title="e.title"
+              :style="`top:${getEventTop(e)};${e.originalEvent.style}`"
+              class="cv-event"
+              @dragstart="onDragStart(e, $event)"
+              @mouseenter="onMouseEnter(e)"
+              @mouseleave="onMouseLeave"
+              @click.stop="onClickEvent(e)"
+              v-html="getEventTitle(e)"/>
+          </slot>
+        </template>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -489,105 +489,105 @@ header are in the CalendarViewHeader component.
 
 /* Make the calendar flex vertically */
 .cv-wrapper {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	height: 100%;
-	min-height: 100%;
-	max-height: 100%;
-	overflow-x: hidden;
-	overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .cv-wrapper,
 .cv-wrapper div {
-	box-sizing: border-box;
-	line-height: 1em;
-	font-size: 1em;
+  box-sizing: border-box;
+  line-height: 1em;
+  font-size: 1em;
 }
 
 .cv-header-days {
-	display: flex;
-	flex-grow: 0;
-	flex-shrink: 0;
-	flex-basis: auto;
-	flex-flow: row nowrap;
-	border-width: 0 0 0 1px;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  flex-flow: row nowrap;
+  border-width: 0 0 0 1px;
 }
 
 .cv-header-day {
-	display: flex;
-	flex-grow: 1;
-	flex-shrink: 0;
-	flex-basis: 0;
-	flex-flow: row nowrap;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	border-width: 1px 1px 0 0;
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-width: 1px 1px 0 0;
 }
 
 /* The calendar grid should take up the remaining vertical space */
 .cv-weeks {
-	display: flex;
-	flex-grow: 1;
-	flex-shrink: 1;
-	flex-basis: auto;
-	flex-flow: column nowrap;
-	border-width: 0 0 1px 1px;
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  flex-flow: column nowrap;
+  border-width: 0 0 1px 1px;
 
-	/* Allow grid to scroll if there are too may weeks to fit in the view */
-	overflow-y: auto;
-	-ms-overflow-style: none;
+  /* Allow grid to scroll if there are too may weeks to fit in the view */
+  overflow-y: auto;
+  -ms-overflow-style: none;
 }
 
 /* Use flex basis of 0 on week row so all weeks will be same height regardless of content */
 .cv-week {
-	display: flex;
-	/* Shorthand flex: 1 1 0 not supported by IE11 */
-	flex-grow: 1;
-	flex-shrink: 0;
-	flex-basis: 0;
-	flex-flow: row nowrap;
-	min-height: 3em;
-	border-width: 0;
+  display: flex;
+  /* Shorthand flex: 1 1 0 not supported by IE11 */
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0;
+  flex-flow: row nowrap;
+  min-height: 3em;
+  border-width: 0;
 
-	/* Allow week events to scroll if they are too tall */
-	position: relative;
-	width: 100%;
-	overflow-y: auto;
-	-ms-overflow-style: none;
+  /* Allow week events to scroll if they are too tall */
+  position: relative;
+  width: 100%;
+  overflow-y: auto;
+  -ms-overflow-style: none;
 }
 
 .cv-day {
-	display: flex;
-	/* Shorthand flex: 1 1 0 not supported by IE11 */
-	flex-grow: 1;
-	flex-shrink: 0;
-	flex-basis: 0;
-	position: relative; /* Fallback for IE11, which doesn't support sticky */
-	position: sticky; /* When week's events are scrolled, keep the day content fixed */
-	top: 0;
-	border-width: 1px 1px 0 0;
+  display: flex;
+  /* Shorthand flex: 1 1 0 not supported by IE11 */
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0;
+  position: relative; /* Fallback for IE11, which doesn't support sticky */
+  position: sticky; /* When week's events are scrolled, keep the day content fixed */
+  top: 0;
+  border-width: 1px 1px 0 0;
 }
 
 .cv-day-number {
-	position: absolute;
-	right: 0;
+  position: absolute;
+  right: 0;
 }
 
 .cv-event {
-	position: absolute;
-	white-space: nowrap;
-	overflow: hidden;
-	background-color: #f7f7f7;
-	border-width: 1px;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  background-color: #f7f7f7;
+  border-width: 1px;
 }
 
 /* Wrap to show entire event title on hover */
 .cv-wrapper.wrap-event-title-on-hover .cv-event:hover {
-	white-space: normal;
-	z-index: 1;
+  white-space: normal;
+  z-index: 1;
 }
 
 /* Colors */
@@ -598,94 +598,94 @@ header are in the CalendarViewHeader component.
 .cv-week,
 .cv-day,
 .cv-event {
-	border-style: solid;
-	border-color: #ddd;
+  border-style: solid;
+  border-color: #ddd;
 }
 
 /* Event Times */
 .cv-event .endTime::before {
-	content: "-";
+  content: "-";
 }
 
 /* Internal Metrics */
 .cv-header-day,
 .cv-day-number,
 .cv-event {
-	padding: 0.2em;
+  padding: 0.2em;
 }
 
 /* Allows emoji icons or labels (such as holidays) to be added more easily to specific dates by having the margin set already. */
 .cv-day-number::before {
-	margin-right: 0.5em;
+  margin-right: 0.5em;
 }
 
 .cv-event.offset0 {
-	left: 0;
+  left: 0;
 }
 
 .cv-event.offset1 {
-	left: calc((100% / 7));
+  left: calc((100% / 7));
 }
 
 .cv-event.offset2 {
-	left: calc((200% / 7));
+  left: calc((200% / 7));
 }
 
 .cv-event.offset3 {
-	left: calc((300% / 7));
+  left: calc((300% / 7));
 }
 
 .cv-event.offset4 {
-	left: calc((400% / 7));
+  left: calc((400% / 7));
 }
 
 .cv-event.offset5 {
-	left: calc((500% / 7));
+  left: calc((500% / 7));
 }
 
 .cv-event.offset6 {
-	left: calc((600% / 7));
+  left: calc((600% / 7));
 }
 
 /* Metrics for events spanning dates */
 
 .cv-event.span1 {
-	width: calc((100% / 7) - 0.05em);
+  width: calc((100% / 7) - 0.05em);
 }
 
 .cv-event.span2 {
-	width: calc((200% / 7) - 0.05em);
+  width: calc((200% / 7) - 0.05em);
 }
 
 .cv-event.span3 {
-	width: calc((300% / 7) - 0.05em);
-	text-align: center;
+  width: calc((300% / 7) - 0.05em);
+  text-align: center;
 }
 
 .cv-event.span4 {
-	width: calc((400% / 7) - 0.05em);
-	text-align: center;
+  width: calc((400% / 7) - 0.05em);
+  text-align: center;
 }
 
 .cv-event.span5 {
-	width: calc((500% / 7) - 0.05em);
-	text-align: center;
+  width: calc((500% / 7) - 0.05em);
+  text-align: center;
 }
 
 .cv-event.span6 {
-	width: calc((600% / 7) - 0.05em);
-	text-align: center;
+  width: calc((600% / 7) - 0.05em);
+  text-align: center;
 }
 
 .cv-event.span7 {
-	width: calc((700% / 7) - 0.05em);
-	text-align: center;
+  width: calc((700% / 7) - 0.05em);
+  text-align: center;
 }
 
 /* Hide scrollbars for the grid and the week */
 .cv-weeks::-webkit-scrollbar,
 .cv-week::-webkit-scrollbar {
-	width: 0; /* remove scrollbar space */
-	background: transparent; /* optional: just make scrollbar invisible */
+  width: 0; /* remove scrollbar space */
+  background: transparent; /* optional: just make scrollbar invisible */
 }
 </style>
