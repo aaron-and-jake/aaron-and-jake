@@ -122,6 +122,7 @@ export default {
         this.data.profileCR = response.body.contributorRating;
         this.data.birthday = response.body.Birthday;
         this.data.image = response.body.Image || 'http://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?k=6&m=476085198&s=612x612&w=0&h=5cDQxXHFzgyz8qYeBQu2gCZq1_TN0z40e_8ayzne0X0=';
+        this.data.profileEC = response.body.eventCount;
       }, (err) => {
         this.$router.push('/login');
         console.log(err);
