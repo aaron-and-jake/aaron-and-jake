@@ -18,6 +18,7 @@ export default {
     navBar,
     'app-footer': footer,
   },
+  
   data() {
     return {
     };

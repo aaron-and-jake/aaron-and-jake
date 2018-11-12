@@ -27,5 +27,7 @@ new Vue({
   el: '#app',
   render: h => h(App),
   router,
-});
+}).$mount('#calendar');
 
+// calendar stuff
+Vue.config.productionTip = false;

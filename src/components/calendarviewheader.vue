@@ -16,7 +16,7 @@
 </template>
 <script>
 export default {
-  name: 'CalendarViewHeader',
+  name: "CalendarViewHeader",
   props: {
     headerProps: {
       type: Object,
@@ -25,9 +25,7 @@ export default {
   },
   methods: {
     onInput(d) {
-      // console.log('WHATS POPPIN')
-      // console.log(d);
-      this.$emit('input', d);
+      this.$emit("input", d);
     },
   },
 };

@@ -14,35 +14,42 @@
         :starting-day-of-week="startingDayOfWeek"
         :class="themeClasses"
         :period-changed-callback="periodChanged"
+        class="cv-event"
+        @show-date-change="setShowDate"
         @click-date="onClickDay"
         @click-event="onClickEvent"
+        @click.stop="onClickEvent(e)"
       >
-        <calendar-view-header slot="header" slot-scope="t" :header-props="t.headerProps" @input="setShowDate" />
+        <calendar-view-header slot="header" slot-scope="t" :header-props="t.headerProps" @input="setShowDate('hey')" />
       </calendar-view>
     </div>
   </div>
 </template>
 <script>
 
-import CalendarView from 'vue-simple-calendar/src/components/CalendarView.vue';
-import CalendarViewHeader from 'vue-simple-calendar/src/components/CalendarViewHeader.vue';
-// import CalendarMathMixin from "vue-simple-calendar/src/components/CalendarMathMixin.js"
-
 import axios from 'axios';
+import CalendarView from "./calendarview.vue"
+import CalendarViewHeader from "./calendarviewheader.vue"
+import CalendarMathMixin from "./calendarmathmixin.js"
+
 
 export default {
-  name: "App",
+  name: "Calendar",
   components: {
     CalendarView,
     CalendarViewHeader,
   },
-  // mixins: [CalendarMathMixin],
+  mixins: [CalendarMathMixin],
   data() {
     return {
       /* Show the current month, and give it some fake events to show */
       t: {
         headerProps: {
           periodLabel: this.monthNames(new Date().getMonth()) + ' ' + new Date().getFullYear(),
+        // previousYear: new Date(),
+        // previousMonth: thePreviousMonth,
+        // nextYear: new Date(),
+        // nextMonth: new Date(),
         },
       },
       showDate: this.thisMonth(1),
@@ -71,13 +78,23 @@ export default {
     themeClasses() {
       return {
         "theme-default": this.useDefaultTheme,
-        "holiday-us-traditional": this.useHolidayTheme,
-        "holiday-us-official": this.useHolidayTheme,
       };
     },
   },
 
   methods: {
+    theNextYear() {
+
+    },
+    theNextMonth() {
+
+    },
+    thePreviousYear() {
+
+    },
+    thePreviousMonth() {
+      this.showDate = this.thisMonth(-1);
+    },
     periodChanged(range, eventSource) {
       // Demo does nothing with this information, just including the method to demonstrate how
       // you can listen for changes to the displayed range and react (by loading events, etc.)
@@ -86,20 +103,32 @@ export default {
     },
     thisMonth(d, h, m) {
       const t = new Date();
-      return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0)
+      return new Date(t.getFullYear(), t.getMonth(), d, h || 0, m || 0);
     },
     // onClickDay(d) {
     //   this.message = `You clicked: ${d.toLocaleDateString()}`
     // },
     onClickEvent(e) {
-      this.message = `You clicked: ${e.title}`;
+      console.log(e);
+      alert("Title: " + e.originalEvent.title + "\nDate: " + e.originalEvent.date + "\nTime: " + e.originalEvent.time + "\nAddress: " + e.originalEvent.address)
     },
     setShowDate(d) {
-      // this.message = `Changing calendar view to ${d.toLocaleDateString()}`
-      this.showDate = d;
+      // FIGURE OUT WHY D IS UNDEFINED HERE!!!!!!!!!!!!!!!!!!
+      console.log(this, 'THIS IS THIS');
+      console.log(d, 'THIS IS D');
+      // this works to go to the previous month
+      // this.showDate = new Date().setMonth(new Date().getMonth() - 1);
+      // this changes the calendar no matter which button u press
+      this.showDate = this.thisMonth(-1);
+      console.log(this.showDate);
+      // if class is ____ , call function corresponding to that
+      const narrowDown = document.getElementsByClassName('cv-header-nav');
+      if (d === narrowDown[0].children[0]) {
+        console.log('HELLO');
+      }
     },
     monthNames(num) {
-      const names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      let names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       return names[num];
     },
     getEvents() {
@@ -130,25 +159,23 @@ background-color: #f7fcff;
 }
 
 #calendar {
-display: flex;
-flex-direction: row;
-font-family: Calibri, sans-serif;
-width: 95vw;
-min-width: 30rem;
-max-width: 50rem;
-min-height: 40rem;
-margin-left: auto;
-margin-right: auto;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    color: #2c3e50;
+    height: 67vh;
+    width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+
 }
 
 .calendar-parent {
-display: flex;
-flex-direction: column;
-flex-grow: 1;
-overflow-x: hidden;
-overflow-y: hidden;
-max-height: 80vh;
-background-color: white;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  max-height: 80vh;
+  background-color: white;
 }
 
 /* For long calendars, ensure each week gets sufficient height.
@@ -156,7 +183,7 @@ The body of the calendar will scroll if needed */
 .cv-wrapper.period-month.periodCount-2 .cv-week,
 .cv-wrapper.period-month.periodCount-3 .cv-week,
 .cv-wrapper.period-year .cv-week {
-min-height: 6rem;
+  min-height: 6rem;
 }
 
 /* These styles are optional, to illustrate the flexbility
